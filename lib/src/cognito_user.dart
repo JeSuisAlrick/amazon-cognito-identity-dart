@@ -35,7 +35,7 @@ class CognitoUser {
   String _session;
   CognitoUserSession _signInUserSession;
   String username;
-  CognitoUserPoolSDK pool;
+  CognitoUserPool pool;
   Client client;
   String authenticationFlowType;
   String deviceName;

@@ -20,7 +20,7 @@ class CognitoUserPoolData {
   }
 }
 
-class CognitoUserPool {
+class CognitoUserPoolSDK {
   String _userPoolId;
   String _clientId;
   String _region;
@@ -28,7 +28,7 @@ class CognitoUserPool {
   Client client;
   CognitoStorage storage;
 
-  CognitoUserPool(
+  CognitoUserPoolSDK(
     String userPoolId,
     String clientId, {
     String endpoint,

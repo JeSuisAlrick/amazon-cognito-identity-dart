@@ -28,7 +28,7 @@ class CognitoUserPool {
   Client client;
   CognitoStorage storage;
 
-  CognitoUserPool(
+  CognitoUserPool (
     String userPoolId,
     String clientId, {
     String endpoint,

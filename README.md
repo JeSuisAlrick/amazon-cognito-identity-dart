@@ -1,3 +1,31 @@
+Taget
++ Support SNS Login by Web UI Host
+
+Instructions
++ Folk from amazon-cognito-identity-dart
++ Refer to below Git for undertanding Web UI flow
+https://github.com/BerndWessels/flutter_aws_app
++ Add authenticateSNS function to below file
+https://github.com/skglobal-jsc/amazon-cognito-identity-dart/blob/master/lib/src/cognito_user.dart#L432
++ After "exchange grant for idToken" step, need call below to merge to flow of lib
+https://github.com/skglobal-jsc/amazon-cognito-identity-dart/blob/master/lib/src/cognito_user.dart#L104
+
+What's need to ask?
+Step1: show SNS screen
++ URL Login
+https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_signin_page.dart#L85
+Step2: parse to get code
++ URL Code
+https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_signin_page.dart#L70
+Step3: exhange grant for idToken
++ URL Exchange
+https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_repository.dart#L180
+
+(Signout flow is the same)
+
+ORIGINAL
+-------------------------------------
+
 # Amazon Cognito Identity SDK for Dart
 Unofficial Amazon Cognito Identity SDK written in Dart for [Dart](https://www.dartlang.org/).
 

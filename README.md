@@ -1,4 +1,4 @@
-Taget
+TARGET
 + Support SNS Login by Web UI Host
 
 Instructions

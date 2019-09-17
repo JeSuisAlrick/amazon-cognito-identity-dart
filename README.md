@@ -11,6 +11,7 @@ https://github.com/skglobal-jsc/amazon-cognito-identity-dart/blob/master/lib/src
 https://github.com/skglobal-jsc/amazon-cognito-identity-dart/blob/master/lib/src/cognito_user.dart#L104
 
 What's need to ask?
+
 Step1: show SNS screen
 + URL Login
 https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_signin_page.dart#L85

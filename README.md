@@ -13,13 +13,10 @@ https://github.com/skglobal-jsc/amazon-cognito-identity-dart/blob/master/lib/src
 What's need to ask?
 
 Step1: show SNS screen
-+ URL Login
 https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_signin_page.dart#L85
 Step2: parse to get code
-+ URL Code
 https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_signin_page.dart#L70
 Step3: exhange grant for idToken
-+ URL Exchange
 https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_repository.dart#L180
 
 (Signout flow is the same)

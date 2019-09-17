@@ -14,8 +14,10 @@ What's need to ask?
 
 Step1: show SNS screen
 https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_signin_page.dart#L85
+
 Step2: parse to get code
 https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_signin_page.dart#L70
+
 Step3: exhange grant for idToken
 https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identity_repository.dart#L180
 

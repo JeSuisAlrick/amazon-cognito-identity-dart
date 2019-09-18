@@ -1,3 +1,23 @@
+9/18
+
+- Mod: cognito_user.dart
+  - Add: Future<CognitoUserSession> authenticateBySnsCode(String snsCode)
+- Add: sns_sign_in_page.dart
+  - Input: links, parser, ...
+  - Output: snsCode
+- Add: sns_sign_out_page.dart
+  - Input: links, parser, ...
+  - Output: snsCode
+- Mod: main.dart
+  - Write sample with Facebook/Google SNS
+  - Implement Storage by SharedPreferences to cache sign_in/out status
+  - Write simple RestFul API with AWS credential to get and sen Product model
+
+
+======================
+
+9/17
+
 TARGET
 + Support SNS Login by Web UI Host
 
@@ -23,8 +43,7 @@ https://github.com/BerndWessels/flutter_aws_app/blob/master/lib/identity/identit
 
 (Signout flow is the same)
 
-ORIGINAL
--------------------------------------
+
 
 # Amazon Cognito Identity SDK for Dart
 Unofficial Amazon Cognito Identity SDK written in Dart for [Dart](https://www.dartlang.org/).

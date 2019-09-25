@@ -442,7 +442,10 @@ class CognitoUser {
   }
 
   /// NEW: This is used for authenticating with SNS code return from AWS.
+  ///
   /// Flow: Mobile => WebView => SNS => AWS => WebView => Mobile => Here
+  ///
+  /// Code have format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   Future<CognitoUserSession> authenticateBySnsCode({
     @required String code,
     @required String userPoolAppClientId,
@@ -526,6 +529,7 @@ class CognitoUser {
     return _authenticateUserInternal(authResult, authenticationHelper);
   }
 
+  /// NEW: Check it is external Identity Provider
   Future<bool> get isExternalIdentityProvider async {
     final keyPrefix = 'CognitoIdentityServiceProvider.${pool.getClientId()}';
     final providerKey = '$keyPrefix.$username.provider';

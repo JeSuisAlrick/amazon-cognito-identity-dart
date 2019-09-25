@@ -9,8 +9,6 @@ Create secret.dart file in `lib` folder, with content:
 ```dart
 import 'package:amazon_cognito_identity_dart/cognito.dart';
 
-final String apiEndpointUrl = 'https://xxxxxxxxxx.execute-api.ap-southeast-1.amazonaws.com/dev';
-
 AuthenticationSNSDetails snsDetails = AuthenticationSNSDetails(
   region: "ap-southeast-1",
   userPoolDomainPrefix: "abc-dev",

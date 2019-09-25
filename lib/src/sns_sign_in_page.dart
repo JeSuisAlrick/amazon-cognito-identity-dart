@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:flutter_user_agent/flutter_user_agent.dart';
 
 typedef String CodeParser(String url);
 
@@ -24,7 +24,6 @@ class SNSSignInPage extends StatefulWidget {
 class _SNSSignInPageState extends State<SNSSignInPage> {
   FlutterWebviewPlugin _flutterWebviewPlugin;
   StreamSubscription<String> _onUrlChangedSubscription;
-  String _webUserAgent;
 
   @override
   void initState() {
@@ -37,20 +36,13 @@ class _SNSSignInPageState extends State<SNSSignInPage> {
           parser = (url) {
             RegExp regExp = new RegExp("code=(.*)");
             var token = regExp.firstMatch(url)?.group(1);
-            print("token $token - $url");
             return token;
           };
         }
         Navigator.pop(context, parser(url));
       }
     });
-    FlutterUserAgent.init().then((_){
-      setState(() {
-        _webUserAgent = FlutterUserAgent.webViewUserAgent;
-      });
-    });
   }
-
 
   @override
   void dispose() {
@@ -61,15 +53,13 @@ class _SNSSignInPageState extends State<SNSSignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: mobile user agent, local storage
-    return _webUserAgent != null ? WebviewScaffold(
+    // TODO: mobile user agent
+    return WebviewScaffold(
       url: widget.loginUrl,
       clearCookies: true,
-      appBar: AppBar(
-        title: Text("Sign In"),
-      ),
-      userAgent: FlutterUserAgent.webViewUserAgent
-      // userAgent: FlutterUserAgent.webViewUserAgent,
-    ) : Container();
+      userAgent: Platform.isAndroid?
+              'Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19':
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_2 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Mobile/14F89 Safari/602.1'
+    );
   }
 }

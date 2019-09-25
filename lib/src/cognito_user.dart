@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+// import 'dart:ui';
+// import 'dart:io';
 import 'package:convert/convert.dart';
+
 import 'package:crypto/crypto.dart';
 import 'attribute_arg.dart';
 import 'cognito_user_attribute.dart';
@@ -14,8 +17,10 @@ import 'client.dart';
 import 'cognito_client_exceptions.dart';
 import 'cognito_storage.dart';
 import 'authentication_details.dart';
+import 'authentication_sns_details.dart';
 import 'authentication_helper.dart';
 import 'date_helper.dart';
+import 'package:http/http.dart' as http;
 
 class CognitoUserAuthResult {
   String challengeName;
@@ -437,6 +442,98 @@ class CognitoUser {
       return await _authenticateUserDefaultAuth(authDetails);
     }
     throw new UnimplementedError('Authentication flow type is not supported.');
+  }
+
+  Future<CognitoUserSession> authenticateBySnsCode(
+      String code,
+      AuthenticationSNSDetails authDetails,
+      ) async {
+
+    if (code == null)
+      return null;
+
+    // Sometime code have #_=_ at the end of code
+    code = code.split('#')[0];
+
+    Map<String, String> body = {
+      "grant_type": "authorization_code",
+      "code": code,
+      "client_id": authDetails.userPoolAppClientId,
+      "redirect_uri": Uri.encodeComponent(authDetails.cognitoUserPoolLoginRedirectUrl),
+    };
+    var realBoby = body.entries.map<String>((v) => '${v.key}=${v.value}').join('&');
+
+    http.Response response;
+    try {
+      response = await http.Client()
+          .post(
+            authDetails.cognitoUserPoolTokenUrl,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: realBoby,
+          )
+          .timeout(const Duration(seconds: 10));
+    } catch (e) {
+      throw CognitoClientException("Request oauth2 error $e");
+    }
+
+    var data;
+    try {
+      data = json.decode(response.body);
+    } catch (e) {
+      throw CognitoClientException("Decode body error $e");
+    }
+    if (response.statusCode < 200 || response.statusCode > 299) {
+      String errorType = "UnknownError";
+      for (String header in response.headers.keys) {
+        if (header.toLowerCase() == "x-amzn-errortype") {
+          errorType = response.headers[header].split(':')[0];
+          break;
+        }
+      }
+      if (data == null) {
+        throw CognitoClientException(
+            "",
+            code: errorType,
+            name: errorType,
+            statusCode: response.statusCode
+        );
+      }
+    }
+
+    if (data.containsKey('error')){
+      throw CognitoClientException('Error: ${data["error"]}');
+    }
+
+    final authenticationHelper = new AuthenticationHelper(
+      pool.getUserPoolId().split('_')[1],
+    );
+
+    // Convert keys into correct format
+    var authResult = {
+      'AuthenticationResult': {
+        "IdToken": data["id_token"],
+        "AccessToken": data["access_token"],
+        "RefreshToken": data["refresh_token"],
+        "ExpiresIn": data["expires_in"],
+        "TokenType": data["token_type"],
+      }
+    };
+
+    username = CognitoIdToken(data["id_token"]).payload['cognito:username']?? username;
+
+    return _authenticateUserInternal(authResult, authenticationHelper);
+  }
+
+  Future<bool> get isExternalIdentityProvider async {
+    final keyPrefix = 'CognitoIdentityServiceProvider.${pool.getClientId()}';
+    final providerKey = '$keyPrefix.$username.provider';
+    if (await storage.getItem(providerKey) != null){
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /// This is used for the user to signOut of the application and clear the cached tokens.
@@ -875,6 +972,12 @@ class CognitoUser {
       storage.setItem(clockDriftKey, '${_signInUserSession.getClockDrift()}'),
       storage.setItem(lastUserKey, username),
     ]);
+
+    if (_signInUserSession != null &&
+    _signInUserSession.idToken.payload.containsKey('identities')) {
+      final providerKey = '$keyPrefix.$username.provider';
+      storage.setItem(providerKey, _signInUserSession.idToken.payload['identities'][0]['providerName']);
+    }
   }
 
   /// This is used to clear the session tokens from local storage
@@ -883,12 +986,14 @@ class CognitoUser {
     final idTokenKey = '$keyPrefix.${this.username}.idToken';
     final accessTokenKey = '$keyPrefix.${this.username}.accessToken';
     final refreshTokenKey = '$keyPrefix.${this.username}.refreshToken';
+    final providerKey = '$keyPrefix.$username.provider';
     final lastUserKey = '$keyPrefix.LastAuthUser';
 
     await Future.wait([
       storage.removeItem(idTokenKey),
       storage.removeItem(accessTokenKey),
       storage.removeItem(refreshTokenKey),
+      storage.removeItem(providerKey),
       storage.removeItem(lastUserKey),
     ]);
   }

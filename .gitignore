@@ -28,3 +28,4 @@ coverage/
 
 # Ignore OS logs/store
 .DS_Store
+example-sns-signin/lib/secret.dart

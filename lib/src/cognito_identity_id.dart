@@ -26,13 +26,17 @@ class CognitoIdentityId {
       return identityId;
     }
     final authenticator = 'cognito-idp.$_region.amazonaws.com/$_userPoolId';
-    final Map<String, String> loginParam = {
-      authenticator: token,
-    };
     final Map<String, dynamic> paramsReq = {
       'IdentityPoolId': _identityPoolId,
-      'Logins': loginParam,
     };
+
+    if (!await (await _pool.getCurrentUser()).isExternalIdentityProvider) {
+      final Map<String, String> loginParam = {
+        authenticator: token,
+      };
+      paramsReq['Logins'] = loginParam;
+    }
+
     final data = await _client.request('GetId', paramsReq,
         service: 'AWSCognitoIdentityService',
         endpoint: 'https://cognito-identity.$_region.amazonaws.com/');

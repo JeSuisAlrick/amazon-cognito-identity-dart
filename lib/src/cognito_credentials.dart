@@ -32,13 +32,16 @@ class CognitoCredentials {
       final identityIdId = await identityId.getIdentityId(token);
 
       final authenticator = 'cognito-idp.$_region.amazonaws.com/$_userPoolId';
-      final Map<String, String> loginParam = {
-        authenticator: token,
-      };
       final Map<String, dynamic> paramsReq = {
         'IdentityId': identityIdId,
-        'Logins': loginParam,
       };
+
+      if (!await (await _pool.getCurrentUser()).isExternalIdentityProvider) {
+        final Map<String, String> loginParam = {
+          authenticator: token,
+        };
+        paramsReq['Logins'] = loginParam;
+      }
 
       var data;
       try {

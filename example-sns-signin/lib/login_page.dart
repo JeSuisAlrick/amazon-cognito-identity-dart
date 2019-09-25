@@ -29,22 +29,14 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(builder: (context) =>
           SNSSignInPage(
-            loginUrl,
-            secret.snsDetails.cognitoUserPoolLoginRedirectUrl,
-            (url) {
-              RegExp regExp = new RegExp("code=(.*)");
-              var token = regExp.firstMatch(url)?.group(1);
-              print("token $token - $url");
-              return token;
-            }
-          )),
+            loginUrl: loginUrl,
+            redirectUrl: secret.snsDetails.cognitoUserPoolLoginRedirectUrl,
+          )
+        ),
       );
       if (code != null && await userService.signUp(code, secret.snsDetails)) {
-        await Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) =>
-            HomePage()
-          )
+        await Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => HomePage())
         );
       }
     } catch (e) {

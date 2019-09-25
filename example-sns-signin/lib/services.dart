@@ -108,7 +108,12 @@ class UserService {
       storage: _userPool.storage
     );
 
-    await cognitoUser.authenticateBySnsCode(code, authDetails);
+    await cognitoUser.authenticateBySnsCode(
+      code: code,
+      userPoolAppClientId: authDetails.userPoolAppClientId,
+      cognitoUserPoolTokenUrl: authDetails.cognitoUserPoolTokenUrl,
+      cognitoUserPoolLoginRedirectUrl: authDetails.cognitoUserPoolLoginRedirectUrl,
+    );
     return await init();
   }
 

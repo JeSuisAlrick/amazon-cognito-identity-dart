@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-// import 'dart:ui';
-// import 'dart:io';
 import 'package:convert/convert.dart';
-
 import 'package:crypto/crypto.dart';
 import 'attribute_arg.dart';
 import 'cognito_user_attribute.dart';
@@ -17,9 +14,9 @@ import 'client.dart';
 import 'cognito_client_exceptions.dart';
 import 'cognito_storage.dart';
 import 'authentication_details.dart';
-import 'authentication_sns_details.dart';
 import 'authentication_helper.dart';
 import 'date_helper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class CognitoUserAuthResult {
@@ -444,11 +441,14 @@ class CognitoUser {
     throw new UnimplementedError('Authentication flow type is not supported.');
   }
 
-  Future<CognitoUserSession> authenticateBySnsCode(
-      String code,
-      AuthenticationSNSDetails authDetails,
-      ) async {
-
+  /// NEW: This is used for authenticating with SNS code return from AWS.
+  /// Flow: Mobile => WebView => SNS => AWS => WebView => Mobile => Here
+  Future<CognitoUserSession> authenticateBySnsCode({
+    @required String code,
+    @required String userPoolAppClientId,
+    @required String cognitoUserPoolLoginRedirectUrl,
+    @required String cognitoUserPoolTokenUrl,
+  }) async {
     if (code == null)
       return null;
 
@@ -458,8 +458,8 @@ class CognitoUser {
     Map<String, String> body = {
       "grant_type": "authorization_code",
       "code": code,
-      "client_id": authDetails.userPoolAppClientId,
-      "redirect_uri": Uri.encodeComponent(authDetails.cognitoUserPoolLoginRedirectUrl),
+      "client_id": userPoolAppClientId,
+      "redirect_uri": Uri.encodeComponent(cognitoUserPoolLoginRedirectUrl),
     };
     var realBoby = body.entries.map<String>((v) => '${v.key}=${v.value}').join('&');
 
@@ -467,7 +467,7 @@ class CognitoUser {
     try {
       response = await http.Client()
           .post(
-            authDetails.cognitoUserPoolTokenUrl,
+            cognitoUserPoolTokenUrl,
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             },

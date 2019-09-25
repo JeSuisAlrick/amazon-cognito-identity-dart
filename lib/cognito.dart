@@ -14,4 +14,3 @@ export 'src/cognito_user_session.dart';
 export 'src/cognito_user.dart';
 export 'src/authentication_sns_details.dart';
 export 'src/sns_sign_in_page.dart';
-export 'src/sns_sign_out_page.dart';

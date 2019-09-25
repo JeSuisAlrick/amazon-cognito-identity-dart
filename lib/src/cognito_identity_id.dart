@@ -30,6 +30,7 @@ class CognitoIdentityId {
       'IdentityPoolId': _identityPoolId,
     };
 
+    /// NEW: SNS case don't need send Logins param
     if (!await (await _pool.getCurrentUser()).isExternalIdentityProvider) {
       final Map<String, String> loginParam = {
         authenticator: token,

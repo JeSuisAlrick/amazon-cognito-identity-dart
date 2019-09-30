@@ -244,6 +244,15 @@ class CognitoUser {
       final deviceKeyKey = '$keyPrefix.${this.username}.deviceKey';
       _deviceKey = await this.storage.getItem(deviceKeyKey);
       authParameters['DEVICE_KEY'] = _deviceKey;
+
+      if (pool.getClientSecret() != null){
+        final signature = Hmac(sha256, utf8.encode(pool.getClientSecret()));
+        authParameters['SECRET_HASH'] = base64.encode(
+          signature.convert(
+            utf8.encode(this.username+pool.getClientId())
+          ).bytes
+        );
+      }
     }
 
     final Map<String, dynamic> paramsReq = {

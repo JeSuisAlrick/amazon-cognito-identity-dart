@@ -23,6 +23,7 @@ class CognitoUserPoolData {
 class CognitoUserPool {
   String _userPoolId;
   String _clientId;
+  String _clientSecret;
   String _region;
   bool advancedSecurityDataCollectionFlag;
   Client client;
@@ -31,6 +32,7 @@ class CognitoUserPool {
   CognitoUserPool(
     String userPoolId,
     String clientId, {
+    String clientSecret,
     String endpoint,
     Client customClient,
     this.storage,
@@ -38,6 +40,7 @@ class CognitoUserPool {
   }) {
     _userPoolId = userPoolId;
     _clientId = clientId;
+    _clientSecret = clientSecret;
     RegExp regExp = new RegExp(r'^[\w-]+_.+$');
     if (!regExp.hasMatch(userPoolId)) {
       throw new ArgumentError('Invalid userPoolId format.');
@@ -61,6 +64,10 @@ class CognitoUserPool {
 
   String getClientId() {
     return _clientId;
+  }
+
+  String getClientSecret() {
+    return _clientSecret;
   }
 
   String getRegion() {

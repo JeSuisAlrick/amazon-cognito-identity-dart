@@ -12,6 +12,7 @@ class AuthenticationSNSDetails {
   final String userPoolDomainPrefix;
   final String userPoolId;
   final String userPoolAppClientId;
+  final String userPoolAppClientSecret;
   final String identityPoolId;
   final String cognitoIdentityPoolUrl;
   final String cognitoUserPoolLoginRedirectUrl;
@@ -23,6 +24,7 @@ class AuthenticationSNSDetails {
     @required this.userPoolDomainPrefix,
     @required this.userPoolId,
     @required this.userPoolAppClientId,
+    this.userPoolAppClientSecret,
     @required this.identityPoolId,
     @required this.cognitoIdentityPoolUrl,
     @required this.cognitoUserPoolLoginRedirectUrl,

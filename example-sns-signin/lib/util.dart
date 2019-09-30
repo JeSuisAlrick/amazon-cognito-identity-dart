@@ -114,9 +114,8 @@ class UserService {
 
     await cognitoUser.authenticateBySnsCode(
       code: code,
-      userPoolAppClientId: snsDetails.userPoolAppClientId,
+      redirectUrl: snsDetails.cognitoUserPoolLoginRedirectUrl,
       cognitoUserPoolTokenUrl: snsDetails.cognitoUserPoolTokenUrl,
-      cognitoUserPoolLoginRedirectUrl: snsDetails.cognitoUserPoolLoginRedirectUrl,
     );
     return await init();
   }

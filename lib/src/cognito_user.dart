@@ -254,6 +254,9 @@ class CognitoUser {
     if (getUserContextData() != null) {
       paramsReq['UserContextData'] = getUserContextData();
     }
+    if (pool.getClientSecret() != null){
+      paramsReq['ClientSecret'] = pool.getClientSecret();
+    }
 
     var authResult;
     try {
@@ -448,8 +451,7 @@ class CognitoUser {
   /// Code have format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   Future<CognitoUserSession> authenticateBySnsCode({
     @required String code,
-    @required String userPoolAppClientId,
-    @required String cognitoUserPoolLoginRedirectUrl,
+    @required String redirectUrl,
     @required String cognitoUserPoolTokenUrl,
   }) async {
     if (code == null)
@@ -461,9 +463,12 @@ class CognitoUser {
     Map<String, String> body = {
       "grant_type": "authorization_code",
       "code": code,
-      "client_id": userPoolAppClientId,
-      "redirect_uri": Uri.encodeComponent(cognitoUserPoolLoginRedirectUrl),
+      "client_id": pool.getClientId(),
+      "redirect_uri": Uri.encodeComponent(redirectUrl),
     };
+    if (pool.getClientSecret() != null){
+      body['client_secret'] = pool.getClientSecret();
+    }
     var realBoby = body.entries.map<String>((v) => '${v.key}=${v.value}').join('&');
 
     http.Response response;
